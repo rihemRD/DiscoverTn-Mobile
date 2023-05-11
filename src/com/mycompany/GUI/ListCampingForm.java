@@ -13,6 +13,7 @@ import com.codename1.ui.Component;
 import static com.codename1.ui.Component.BOTTOM;
 import static com.codename1.ui.Component.CENTER;
 import static com.codename1.ui.Component.LEFT;
+import static com.codename1.ui.Component.RIGHT;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
 import com.codename1.ui.Display;
@@ -40,6 +41,7 @@ import com.codename1.ui.util.Resources;
 import com.mycompany.entities.Camping;
 import com.mycompany.entities.Participation;
 import com.mycompany.services.ServiceCamping;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 /**
@@ -108,9 +110,24 @@ public class ListCampingForm extends BaseForm {
             containerCamping.add(new Label("Id: " + t.getIdCamping()));
             containerCamping.add(new Label("Nom : " + t.getNom()));
             containerCamping.add(new Label("Lieux : " + t.getLieux()));
-            //containerCamping.add(new Label("Date : " + t.getDateDebut()));
+            containerCamping.add(new Label("Date : " + t.getDateDebut()));
             containerCamping.add(new Label("Prix : " + t.getPrix()));
             containerCamping.add(new Label("Description : " + t.getDescription()));
+            String urlImage = t.getImageC();
+            
+             Image placeHolder = Image.createImage(120, 90);
+             EncodedImage enc =  EncodedImage.createFromImage(placeHolder,false);
+             URLImage urlim = URLImage.createToStorage(enc, urlImage, urlImage, URLImage.RESIZE_SCALE);
+             
+                addButton(urlim,t,resourceObjectInstance);
+        
+                ScaleImageLabel image = new ScaleImageLabel(urlim);
+                
+                Container containerImg = new Container();
+                
+                image.setBackgroundType(Style.BACKGROUND_IMAGE_SCALED_FILL);
+            containerCamping.add(containerImg);
+            containerCamping.add(new Label("Image : " + image));
             Button btnModif = new Button("Modifier");
             Button btnSupp = new Button("Supprimer");
             Button btnRes = new Button("Participation");
@@ -170,5 +187,59 @@ public class ListCampingForm extends BaseForm {
 //            });
         }
      }
+    private void addButton(Image img, Camping E,Resources res) {
+
+        int height = Display.getInstance().convertToPixels(11.5f);
+        int width = Display.getInstance().convertToPixels(14f);
+
+        Button image = new Button(img.fill(width, height));
+        image.setUIID("Label");
+
+        Container cont = BorderLayout.west(image);
+
+        Label Nomtxt = new Label("" + E.getNom(), "NewsTopLine2");
+        Label DDtxt = new Label("Le : " + E.getDateDebut(), "NewsTopLine");
+        Label DFtxt = new Label("Jusqu'a " + E.getDateFin(), "NewsTopLine");
+         Label Images = new Label(""+E.getImageC());
+        createLineSeparator();
+       
+           Image imge;
+     try {
+                    imge = Image.createImage("file://C:/xampp/htdocs/PIDEV/Dashboard/public/"+ E.getImageC()).scaledWidth(Math.round(Display.getInstance().getDisplayWidth()));
+                                        Images.setIcon(img);
+
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+           Images.setIcon(img);
+        //supprimer
+        Label lsup = new Label("");
+        lsup.setUIID("NewsTopLine");
+        Style supStyle = new Style(lsup.getUnselectedStyle());
+        supStyle.setFgColor(0xf21f1f);
+
+        FontImage suppImage = FontImage.createMaterial(FontImage.MATERIAL_DELETE, supStyle);
+        lsup.setIcon(suppImage);
+        lsup.setTextPosition(RIGHT);
+        lsup.addPointerPressedListener(l -> { 
+              
+        Dialog dig = new Dialog("Supprimer"); 
+
+        if (dig.show("Suppression", "Vous Voulez Supprimer ce Evénement ? ", "Non", "Oui")) {
+            dig.dispose();
+        } else {
+            dig.dispose();
+            if(ServiceCamping.getInstance().deleteCamping(E.getIdCamping())){
+                System.out.println("done");
+            new ListCampingForm(res).show();
+        }
+        }
+        });
+    
+       
+
+        add(cont);
+
+    }
    
 }

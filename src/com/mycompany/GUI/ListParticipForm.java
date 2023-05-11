@@ -6,13 +6,13 @@ package com.mycompany.GUI;
 
 import com.codename1.components.ScaleImageLabel;
 import com.codename1.ui.Button;
-import com.codename1.ui.Command;
 import com.codename1.ui.Container;
-import com.codename1.ui.Dialog;
+import com.codename1.ui.EncodedImage;
 import com.codename1.ui.FontImage;
 import com.codename1.ui.Image;
 import com.codename1.ui.Label;
 import com.codename1.ui.Toolbar;
+import com.codename1.ui.URLImage;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BoxLayout;
@@ -22,27 +22,28 @@ import com.codename1.ui.util.Resources;
 import com.mycompany.entities.Camping;
 import com.mycompany.entities.Participation;
 import com.mycompany.services.ServiceCamping;
+import com.mycompany.services.sms;
 import java.util.List;
 
 /**
  *
  * @author rihem
  */
-public class ParticiperForm extends BaseForm {
+public class ListParticipForm extends BaseForm{
     ServiceCamping servicescampings = ServiceCamping.getInstance();
     Container containerglobal = new Container(new BoxLayout(BoxLayout.Y_AXIS));
 
-    public ParticiperForm() {
+    public ListParticipForm() {
         this(com.codename1.ui.util.Resources.getGlobalResources());
     }
 
-    public ParticiperForm(com.codename1.ui.util.Resources resourceObjectInstance) {
+    public ListParticipForm(com.codename1.ui.util.Resources resourceObjectInstance) {
         
-        super("Camping", BoxLayout.y());
+        super("Participation", BoxLayout.y());
         Toolbar tb = new Toolbar(true);
         setToolbar(tb);
         getTitleArea().setUIID("Container");
-        setTitle("Camping");
+        setTitle("Participation");
         getContentPane().setScrollVisible(false);
         
         super.addSideMenu(resourceObjectInstance);
@@ -73,8 +74,8 @@ public class ParticiperForm extends BaseForm {
         setLayout(new com.codename1.ui.layouts.BoxLayout(com.codename1.ui.layouts.BoxLayout.Y_AXIS));
         setInlineStylesTheme(resourceObjectInstance);
         setInlineStylesTheme(resourceObjectInstance);
-        setTitle("Campings");
-        setName("Campings");
+        setTitle("Participations");
+        setName("Participations");
         
         Image img = resourceObjectInstance.getImage("profile-background.jpg");
 
@@ -83,23 +84,28 @@ public class ParticiperForm extends BaseForm {
         sl.setBackgroundType(Style.BACKGROUND_IMAGE_SCALED_FILL);
         
         addComponent(containerglobal);
-        List<Camping> campings = servicescampings.AllCampings();
-          for (Camping t : campings) {
+        List<Participation> participations = servicescampings.AllParticipations();
+          for (Participation t : participations) {
             Container containerCamping = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-            containerCamping.add(new Label("Id: " + t.getIdCamping()));
+            containerCamping.add(new Label("Ref: " + t.getRefp()));
             containerCamping.add(new Label("Nom : " + t.getNom()));
-            containerCamping.add(new Label("Lieux : " + t.getLieux()));
-            //containerCamping.add(new Label("Date : " + t.getDateDebut()));
-            containerCamping.add(new Label("Prix : " + t.getPrix()));
-            containerCamping.add(new Label("Description : " + t.getDescription()));
-            Button btnRes = new Button("Participation");
+            containerCamping.add(new Label("Etat : " + t.getEtat()));
+            containerCamping.add(new Label("Date : " + t.getDateParti()));
+            containerCamping.add(new Label("Prix : " + t.getMontant()));
+            
+            Button btnSupp = new Button("Supprimer");
+           Button btnconf = new Button("Confirmer");
+           
             Container containerbtnmodifsupp = new Container(new BoxLayout(BoxLayout.X_AXIS));
 
             containerCamping.add(containerbtnmodifsupp);
                   
-           
-            containerbtnmodifsupp.add(btnRes);
-
+            containerbtnmodifsupp.add(btnSupp);
+            String etat = t.getEtat();
+            if (etat.equals("En Attend")) {
+              containerbtnmodifsupp.add(btnconf);
+                }
+            
             Label gui_separator1 = new Label();
             //separateur
             gui_separator1.setShowEvenIfBlank(true);
@@ -110,26 +116,23 @@ public class ParticiperForm extends BaseForm {
             containerglobal.add(containerCamping);
             containerglobal.addComponent(gui_separator1);
 
-           
-            
-           
-            btnRes.addActionListener(new ActionListener() {
+
+            btnSupp.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent evt) {
-                    int userid = SessionManager.getId();
-                    Participation reservation = new Participation();
-                    reservation.setIdCamp(t);
-                    reservation.setIdClient(userid);
-                    ServiceCamping su = ServiceCamping.getInstance();
-                   // su.addParticipation(t);
- 
-                    if (su.addParticipation(t)) {
-                        Dialog.show("Participation", "Camping reservé", new Command("OK"));
-                    } else {
-                        Dialog.show("Participation", "Erreur de Participation", new Command("OK"));
-                    }
+                    servicescampings.deleteParticipation(t.getIdParti());
+                    new ListParticipForm().show();
                 }
             });
+            btnconf.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    servicescampings.ConfParticipation(t.getIdParti());
+                    sms.sendSms();
+                    new ListParticipForm().show();
+                }
+            });
+          
         }
      }
 }

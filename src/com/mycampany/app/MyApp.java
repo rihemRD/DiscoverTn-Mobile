@@ -21,6 +21,7 @@ import com.codename1.ui.Toolbar;
 import com.codename1.io.NetworkEvent;
 import com.mycompany.GUI.AjoutCampingForm;
 import com.mycompany.GUI.ListCampingForm;
+import com.mycompany.GUI.ListParticipForm;
 import com.mycompany.GUI.ParticiperForm;
 
 /**
@@ -60,7 +61,7 @@ public class MyApp {
             current.show();
             return;
         }
-        new ListCampingForm(theme).show();
+        new ListParticipForm(theme).show();
         /*Form hi = new Form("Welcome", new BorderLayout(BorderLayout.CENTER_BEHAVIOR_CENTER_ABSOLUTE));
         final Label apple = new Label(theme.getImage("apple-icon.png")); 
         final Label android = new Label(theme.getImage("android-icon.png")); 

@@ -4,7 +4,8 @@
  */
 package com.mycompany.entities;
 
-import java.util.Date;
+import java.time.LocalDate;
+ import java.util.Date;
 
 /**
  *
@@ -14,7 +15,7 @@ public class Camping {
      private int periode, nbr_place;
     private int idCamping;
     private String nom, lieux, description;
-    Date dateDebut, dateFin;
+    LocalDate dateDebut, dateFin;
     private double prix;
     private String image;
     private String imageC;
@@ -22,7 +23,7 @@ public class Camping {
     public Camping() {
     }
 
-    public Camping(int periode, int nbr_place, String nom, String lieux, String description, Date dateDebut, Date dateFin, double prix, String image, String imageC) {
+    public Camping(int periode, int nbr_place, String nom, String lieux, String description, LocalDate dateDebut, LocalDate dateFin, double prix, String image, String imageC) {
         this.periode = periode;
         this.nbr_place = nbr_place;
         this.nom = nom;
@@ -35,7 +36,7 @@ public class Camping {
         this.imageC = imageC;
     }
 
-    public Camping( int idCamping,int periode, int nbr_place, String nom, String lieux, String description, Date dateDebut, Date dateFin, double prix, String image, String imageC) {
+    public Camping( int idCamping,int periode, int nbr_place, String nom, String lieux, String description, LocalDate dateDebut, LocalDate dateFin, double prix, String image, String imageC) {
         this.periode = periode;
         this.nbr_place = nbr_place;
         this.idCamping = idCamping;
@@ -97,19 +98,19 @@ public class Camping {
         this.description = description;
     }
 
-    public Date getDateDebut() {
+    public LocalDate getDateDebut() {
         return dateDebut;
     }
 
-    public void setDateDebut(Date dateDebut) {
+    public void setDateDebut(LocalDate dateDebut) {
         this.dateDebut = dateDebut;
     }
 
-    public Date getDateFin() {
+    public LocalDate getDateFin() {
         return dateFin;
     }
 
-    public void setDateFin(Date dateFin) {
+    public void setDateFin(LocalDate dateFin) {
         this.dateFin = dateFin;
     }
 

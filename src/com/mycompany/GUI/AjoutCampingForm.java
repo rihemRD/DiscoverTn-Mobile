@@ -5,9 +5,11 @@
 package com.mycompany.GUI;
 
 import com.codename1.capture.Capture;
+import com.codename1.ui.spinner.Picker;
 import com.codename1.components.InfiniteProgress;
 import com.codename1.components.ScaleImageLabel;
 import com.codename1.components.SpanLabel;
+import com.codename1.io.File;
 import com.codename1.ui.Button;
 import com.codename1.ui.ButtonGroup;
 import com.codename1.ui.Command;
@@ -32,6 +34,7 @@ import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.GridLayout;
 import com.codename1.ui.layouts.LayeredLayout;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.util.Resources;
 import com.codename1.util.StringUtil;
 import com.mycompany.entities.Camping;
@@ -40,7 +43,9 @@ import com.mycompany.services.ServiceCamping;
 //import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+ import java.util.Date;
 /**
  *
  * @author rihem
@@ -74,6 +79,11 @@ public class AjoutCampingForm extends BaseForm{
     private TextField Place = new   TextField("", "Place");
     private Label descriptionLabel = new  Label();
     private TextField description = new  TextField("", "description");
+    private Label DateDebutLabel = new  Label("Date Debut");
+    private Picker dateDebutPicker = new Picker();
+    private Label DateFinLabel = new Label("Date Fin");
+    private Picker dateFinPicker = new Picker();
+
  
     
         
@@ -142,6 +152,10 @@ public class AjoutCampingForm extends BaseForm{
         c2.addComponent(Place);
         c2.addComponent(lieuxLabel);
         c2.addComponent(lieux);
+        c2.addComponent(DateDebutLabel);
+        c2.addComponent(dateDebutPicker);
+        c2.addComponent(DateFinLabel);
+        c2.addComponent(dateFinPicker);
         
         
         Button btCapture = new Button ("Image");
@@ -152,25 +166,25 @@ public class AjoutCampingForm extends BaseForm{
               String path1 = Capture.capturePhoto(Display.getInstance().getDisplayWidth(), -1);
            if(path1!=null)
                 {
-                    //File copy from source to destination
-                    //DON'T ASK ME HOW !!!!!
+//                    File copy from source to destination
+//                    DON'T ASK ME HOW !!!!!
                     path=path1;
                     y="C:\\xampp\\htdocs\\PideversImgUploaded\\Event\\";
-                    //x="file://C:/Users/BENMAH~1/AppData/Local/Temp/";
+                    x="file://C:/Users/BENMAH~1/AppData/Local/Temp/";
                     A="..";
                     j=".";
                     String Temppath ="C:\\Users\\Ben Mahmoud\\AppData\\Local\\Temp\\";
-//                    int lenghtfile=path1.length();
-//                    System.out.println(lenghtfile);
-//                    String nomimgfalse=path1.substring(44);
-//                    String nomimg=StringUtil.replaceAll(nomimgfalse, A, j);
-//                    k=StringUtil.replaceAll(path, A, j);
-//                    Newpath=StringUtil.replaceAll(k,x,y);
-//                    finalpath=Temppath+nomimgfalse;
-//                    finalpathbase=y+nomimg;
-//                   
-                  //  File source = new File(finalpath);
-                    //File Dest= new File(Newpath);
+                    int lenghtfile=path1.length();
+                    System.out.println(lenghtfile);
+                    String nomimgfalse=path1.substring(44);
+                    String nomimg=StringUtil.replaceAll(nomimgfalse, A, j);
+                    k=StringUtil.replaceAll(path, A, j);
+                    Newpath=StringUtil.replaceAll(k,x,y);
+                    finalpath=Temppath+nomimgfalse;
+                    finalpathbase=y+nomimg;
+                   
+                    File source = new File(finalpath);
+                    File Dest= new File(Newpath);
                   
                     
                     try {
@@ -200,11 +214,31 @@ public class AjoutCampingForm extends BaseForm{
     
 
         gui_Component_Group_1.setName("Component_Group_1");
+        
+        
+        String dateDString = dateDebutPicker.getText();
+        String dateFString = dateFinPicker.getText();
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//    Date dateD = format.parse(dateDString);
+//    Date dateF = format.parse(dateFString);
+//    
+    String dateString = dateDebutPicker.getText();
+SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+//     Date dateD = format.parse(dateString);
+//     Date dateF = dateFormat.parse(dateFString);
+/*
+String dateString = "2023-05-10";
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+LocalDate date = LocalDate.parse(dateString, formatter);
+*/
 
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+LocalDate dateD = LocalDate.parse(dateDString, formatter);
+LocalDate dateF = LocalDate.parse(dateFString, formatter);
         btnconfirmer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                //if (!nomText.getText().isEmpty() && !datePickerdebut.getText().isEmpty() && !datePickerfin.getText().isEmpty() && !primeText.getText().isEmpty()) {
+              //  if (!nomText.getText().isEmpty() && !datePickerdebut.getText().isEmpty() && !datePickerfin.getText().isEmpty() && !primeText.getText().isEmpty()) {
                 
                    Camping r = new Camping(
                            Integer.parseInt(Periode.getText()),
@@ -212,7 +246,7 @@ public class AjoutCampingForm extends BaseForm{
                            String.valueOf( nom.getText()),
                            String.valueOf(lieux.getText()) ,
                             String.valueOf(description.getText()),
-                           null,null,
+                         dateD,dateF,
                             Integer.parseInt(Prix.getText()),
                              String.valueOf(finalpathbase),
                              String.valueOf(finalpathbase));
@@ -235,72 +269,12 @@ public class AjoutCampingForm extends BaseForm{
         });
 
     }
-//        btnAjouter.addActionListener((e) -> {
-// 
-//            public AjoutCampingForm( Resources res) {
-//                
-//            }
-//            
-//            try {
-//                
-//                if(objet.getText().equals("") || description.getText().equals("")) {
-//                    Dialog.show("Veuillez vérifier les données","","Annuler", "OK");
-//                }
-//                
-//                else {
-//                    InfiniteProgress ip = new InfiniteProgress();; //Loading  after insert data
-//                
-//                    final Dialog iDialog = ip.showInfiniteBlocking();
-//                    
-//                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-//                    
-//                    //njibo iduser men session (current user)
-//                    Camping r = new Camping(
-//                           Integer.parseInt(Periode.getText()),
-//                           Integer.parseInt(Place.getText()),
-//                           String.valueOf( nom.getText()),
-//                           String.valueOf(lieux.getText()) ,
-//                            String.valueOf(description.getText()),
-//                           null,null,
-//                            Integer.parseInt(Prix.getText()),
-//                             String.valueOf(ImageC.getText()),
-//                             String.valueOf(Image.getText()));
-//                    
-//                    System.out.println("data  reclamation == "+r);
-//                    
-//                        
-//                    //appelle methode ajouterReclamation mt3 service Reclamation bch nzido données ta3na fi base 
-//                    ServiceCamping.getInstance().ajoutCamping(r);
-//                    
-//                    iDialog.dispose(); //na7io loading ba3d ma3mlna ajout
-//                    
-//                    //ba3d ajout net3adaw lel ListREclamationForm
-//                    new ListCampingForm(res).show();
-//                    
-//                    
-//                    refreshTheme();//Actualisation
-//                            
-//                }
-//                
-//            }catch(Exception ex ) {
-//                ex.printStackTrace();
-//            }
-//            
-//            
-//            
-//            
-//            
-//        });
-//        
-//        
-//    }
-//
-//    private void addStringValue(String s, Component v) {
-//        
-//        add(BorderLayout.west(new Label(s,"PaddedLabel"))
-//        .add(BorderLayout.CENTER,v));
-//        add(createLineSeparator(0xeeeeee));
-//    }
+private void addStringValue(String s, Component V) {
+        add(BorderLayout.west(new Label(s, "PaddedLabel")).add(BorderLayout.CENTER, V));
+        add(createLineSeparator(0xeeeeee));
+
+    }
+
 
      private void addTab(Tabs swipe, Label spacer , Image image, String string, String text, Resources res) {
        int size = Math.min(Display.getInstance().getDisplayWidth(), Display.getInstance().getDisplayHeight());

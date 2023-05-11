@@ -30,6 +30,8 @@ public class ServiceCamping {
          public static boolean resultOk = true;
          boolean resultOK;
          public List<Camping> us;
+         public List<Participation> usp;
+         
         
             private ConnectionRequest req;
 
@@ -51,6 +53,7 @@ public class ServiceCamping {
                 "&periode="+camp.getPeriode()+"&nbr_place="+camp.getNbr_place();        
                 req.setUrl(url);
                 req.setPost(false);
+                System.out.println(url); 
                 
                 req.addResponseListener(new ActionListener<NetworkEvent>() {
                     @Override
@@ -167,7 +170,7 @@ System.out.println(listCampings);
                         Date currentTime = new Date(Double.valueOf(DateConverter).longValue() * 1000);
                         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                         String dateString = formatter.format(currentTime);
-                        camp.setDateDebut( currentTime);
+                       // camp.setDateDebut( currentTime);
                         
                         //insert data into ArrayList result
                         result.add(camp);
@@ -263,6 +266,179 @@ System.out.println(listCampings);
         NetworkManager.getInstance().addToQueueAndWait(req);
         return resultOK;
     }   
-        
+          
+          
+           public List<Participation> parseParticipations(String json) {
+    ArrayList<Participation> listParticipations = new ArrayList<>();
+                JSONParser jsonp ;
+                jsonp = new JSONParser();
+    try {
+        JSONParser j = new JSONParser();
+        //Map<String, Object> tasksListJson = j.parseJSON(new CharArrayReader(json.toCharArray()));
 
+
+ Map<String,Object>mapParticipations = jsonp.parseJSON(new CharArrayReader(new String(req.getResponseData()).toCharArray()));
+   List<Map<String, Object>> list = (List<Map<String, Object>>) mapParticipations.get("root");
+            
+                    
+        if (list.size() <= 0) {  
+        System.out.println("fergha");    
+        return listParticipations;
+            
+        }       
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for (Map<String, Object> obj : list) {
+
+            Participation participation = new Participation(); 
+            float id = Float.parseFloat(obj.get("id").toString());
+            participation.setIdParti((int) id);      
+            participation.setNom(obj.get("nom").toString());
+            participation.setEtat(obj.get("etat").toString());
+            participation.setRefp(obj.get("refp").toString());
+            String dateDebutString = obj.get("dateParti").toString();
+            //participation.setDateParti(dateFormat.parse(dateDebutString));
+//            String dateFinString = obj.get("dateFin").toString();
+//            Date dateFin = dateFormat.parse(dateFinString);
+//            camping.setDateFin(dateFin);
+            float Nombre = Float.parseFloat(obj.get("nombre").toString());
+            participation.setNombre((int)Nombre);
+            float Montant = Float.parseFloat(obj.get("montant").toString());
+            participation.setMontant((double)Montant);
+            
+             System.out.println(obj);
+            listParticipations.add(participation);
+            System.out.println("jawek behy");
+                        }
+                    
+                }catch(Exception ex) {
+                    
+                    ex.printStackTrace();
+                }
+System.out.println(listParticipations);
+
+    return listParticipations;
+    }
+          
+          
+       public List<Participation> AllParticipations() {
+        String url = Statics.BASE_URL + "/afficherParticipationMobile";
+        req.setUrl(url);
+        req.setPost(false);
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                usp = parseParticipations(new String(req.getResponseData()));
+                req.removeResponseListener(this);
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        return usp;
+    }
+         
+         
+         
+       public ArrayList<Participation>affichageParticipations() {
+        ArrayList<Participation> result = new ArrayList<>();
+        
+        String url = Statics.BASE_URL+"/afficherParticipationMobile";
+        req.setUrl(url);
+        
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                JSONParser jsonp ;
+                jsonp = new JSONParser();
+                
+                try {
+                    Map<String,Object>mapParticipations = jsonp.parseJSON(new CharArrayReader(new String(req.getResponseData()).toCharArray()));
+                    
+                        List<Map<String, Object>> list = (List<Map<String, Object>>) mapParticipations.get("root");
+                    
+                        for (Map<String, Object> obj : list) {
+                        Participation part = new Participation();
+                        
+                        float id = Float.parseFloat(obj.get("id").toString());
+                        String Nom = obj.get("nom").toString();
+                        String Ref = obj.get("refp").toString();
+                        String etat = obj.get("etat").toString();
+                        float Nombre = Float.parseFloat(obj.get("nombre").toString());
+                        float Montant = Float.parseFloat(obj.get("montant").toString());
+                        part.setIdParti((int)id);
+                        part.setNom(Nom);
+                        part.setRefp(Ref);
+                        part.setEtat(etat);
+                        part.setNombre((int)Nombre);
+                        part.setMontant((double)Montant);
+                        String DateConverter =  obj.get("dateParti").toString().substring(obj.get("date").toString().indexOf("timestamp") + 10 , obj.get("date").toString().lastIndexOf("}"));
+                        Date currentTime = new Date(Double.valueOf(DateConverter).longValue() * 1000);
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                        String dateString = formatter.format(currentTime);
+                        part.setDateParti( currentTime);
+                        
+                        //insert data into ArrayList result
+                        result.add(part);
+                        }
+                    
+                }catch(Exception ex) {
+                    
+                    ex.printStackTrace();
+                }
+            
+            }
+        });
+        
+      NetworkManager.getInstance().addToQueueAndWait(req);//execution ta3 request sinon yet3ada chy dima nal9awha
+
+        return result;
+        
+        
+    } 
+        public boolean deleteParticipation(int id ) {
+        
+         boolean confirmed = Dialog.show("Confirmation", "Are you sure you want to delete this Participation?", "Yes", "Cancel");
+    if (confirmed) {
+        String url = Statics.BASE_URL + "/supprimerParticipationMobile/" + id;
+        req.setUrl(url);
+
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this); //Supprimer cet actionListener
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        if (resultOK) {
+            Dialog.show("Success", "Participation deleted successfully", "OK", null);
+        } else {
+            Dialog.show("Error", "Failed to delete participation", "OK", null);
+        }
+    }
+    return resultOK;
+    }
+        
+        
+ public boolean ConfParticipation(int id ) {
+        
+         boolean confirmed = Dialog.show("Confirmation", "Are you sure you want to Confirm this Participation?", "Yes", "Cancel");
+    if (confirmed) {
+        String url = Statics.BASE_URL + "/confirmerParticipationMobile/" + id;
+        req.setUrl(url);
+
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this); //Supprimer cet actionListener
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        if (resultOK) {
+            Dialog.show("Success", "Participation Confirmer successfully", "OK", null);
+        } else {
+            Dialog.show("Error", "Failed to Confirm participation", "OK", null);
+        }
+    }
+    return resultOK;
+    }
 }
