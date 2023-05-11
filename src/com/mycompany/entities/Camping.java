@@ -4,7 +4,8 @@
  */
 package com.mycompany.entities;
 
-import java.time.LocalDate;
+
+import org.joda.time.LocalDate;
  import java.util.Date;
 
 /**

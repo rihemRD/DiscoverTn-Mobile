@@ -26,11 +26,14 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.LayeredLayout;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.spinner.Picker;
 import com.codename1.ui.util.Resources;
 import com.mycompany.entities.Camping;
 import com.mycompany.services.ServiceCamping;
 import java.io.IOException;
-
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 /**
  *
  * @author rihem
@@ -61,7 +64,11 @@ public class ModifierCampingForm extends BaseForm {
     private TextField Place = new   TextField("", "Place");
     private Label descriptionLabel = new  Label();
     private TextField description = new  TextField("", "description");
-     
+    private Label DateDebutLabel = new  Label("Date Debut");
+    private Picker dateDebutPicker = new Picker();
+    private Label DateFinLabel = new Label("Date Fin");
+    private Picker dateFinPicker = new Picker();
+ 
     private com.codename1.ui.Button btnconfirmer = new com.codename1.ui.Button();
     
     public ModifierCampingForm() {
@@ -132,6 +139,10 @@ public class ModifierCampingForm extends BaseForm {
         c2.addComponent(Place);
         c2.addComponent(lieuxLabel);
         c2.addComponent(lieux);
+        c2.addComponent(DateDebutLabel);
+        c2.addComponent(dateDebutPicker);
+        c2.addComponent(DateFinLabel);
+        c2.addComponent(dateFinPicker);
         
          Button btCapture = new Button ("Image");
         Label lbltImage = new Label ();
@@ -162,6 +173,11 @@ public class ModifierCampingForm extends BaseForm {
         gui_Container_1.addComponent(btnconfirmer);
         
         gui_Component_Group_1.setName("Component_Group_1");
+        String dateDString = dateDebutPicker.getText();
+        String dateFString = dateFinPicker.getText();
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("MM/dd/yyyy");
+        LocalDate dateD = LocalDate.parse(dateDString, formatter);
+        LocalDate dateF = LocalDate.parse(dateFString, formatter);
         
         btnconfirmer.addActionListener(new ActionListener() {
             @Override
@@ -174,7 +190,7 @@ public class ModifierCampingForm extends BaseForm {
                            String.valueOf( nom.getText()),
                            String.valueOf(lieux.getText()) ,
                             String.valueOf(description.getText()),
-                           null,null,
+                           dateD,dateF,
                             Float.parseFloat(Prix.getText()),
                              String.valueOf(myPath),
                              String.valueOf(myPath));
@@ -205,6 +221,10 @@ public class ModifierCampingForm extends BaseForm {
     Place.setText(String.valueOf(camping.getNbr_place()));
     Prix.setText(String.valueOf(camping.getPrix()));
     
+//        LocalDate localDate = camping.getDateDebut();
+//        Date date = Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+//        dateDebutPicker.setDate(date);
+  //  dateDebutPicker.setValue(camping.getDateDebut());
     
     }
     

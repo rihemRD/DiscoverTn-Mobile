@@ -43,9 +43,10 @@ import com.mycompany.services.ServiceCamping;
 //import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
  import java.util.Date;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 /**
  *
  * @author rihem
@@ -218,12 +219,12 @@ public class AjoutCampingForm extends BaseForm{
         
         String dateDString = dateDebutPicker.getText();
         String dateFString = dateFinPicker.getText();
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //    Date dateD = format.parse(dateDString);
 //    Date dateF = format.parse(dateFString);
 //    
     String dateString = dateDebutPicker.getText();
-SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+//SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 //     Date dateD = format.parse(dateString);
 //     Date dateF = dateFormat.parse(dateFString);
 /*
@@ -232,7 +233,7 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 LocalDate date = LocalDate.parse(dateString, formatter);
 */
 
-DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+DateTimeFormatter formatter = DateTimeFormat.forPattern("MM/dd/yyyy");
 LocalDate dateD = LocalDate.parse(dateDString, formatter);
 LocalDate dateF = LocalDate.parse(dateFString, formatter);
         btnconfirmer.addActionListener(new ActionListener() {
