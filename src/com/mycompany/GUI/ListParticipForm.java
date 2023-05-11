@@ -95,15 +95,17 @@ public class ListParticipForm extends BaseForm{
             
             Button btnSupp = new Button("Supprimer");
            Button btnconf = new Button("Confirmer");
+           Button btnshow = new Button("show");
            
             Container containerbtnmodifsupp = new Container(new BoxLayout(BoxLayout.X_AXIS));
 
             containerCamping.add(containerbtnmodifsupp);
-                  
-            containerbtnmodifsupp.add(btnSupp);
+                  containerbtnmodifsupp.add(btnshow);
+            
             String etat = t.getEtat();
             if (etat.equals("En Attend")) {
               containerbtnmodifsupp.add(btnconf);
+              containerbtnmodifsupp.add(btnSupp);
                 }
             
             Label gui_separator1 = new Label();
@@ -128,7 +130,15 @@ public class ListParticipForm extends BaseForm{
                 @Override
                 public void actionPerformed(ActionEvent evt) {
                     servicescampings.ConfParticipation(t.getIdParti());
-                    sms.sendSms();
+                    servicescampings.SendMail(t.getIdParti());
+                    new ListParticipForm().show();
+                }
+            });
+            btnshow.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    servicescampings.ConfParticipation(t.getIdParti());
+                    servicescampings.SendMail(t.getIdParti());
                     new ListParticipForm().show();
                 }
             });

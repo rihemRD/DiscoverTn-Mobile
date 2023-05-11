@@ -441,4 +441,28 @@ System.out.println(listParticipations);
     }
     return resultOK;
     }
+ 
+ public boolean SendMail(int id ) {
+        
+//         boolean confirmed = Dialog.show("Confirmation", "Are you sure you want to Confirm this Participation?", "Yes", "Cancel");
+//    if (confirmed) {
+        String url = Statics.BASE_URL + "/mailling/" + id;
+        req.setUrl(url);
+
+        req.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                resultOK = req.getResponseCode() == 200; //Code HTTP 200 OK
+                req.removeResponseListener(this); //Supprimer cet actionListener
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(req);
+        if (resultOK) {
+            Dialog.show("Success", "Participation Confirmer successfully", "OK", null);
+        } else {
+            Dialog.show("Error", "Failed to Confirm participation", "OK", null);
+        }
+//    }
+    return resultOK;
+    }
 }
